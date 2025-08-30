@@ -1,10 +1,39 @@
 require('dotenv').config();
+const mongoose = require('mongoose');
 
+mongoose.connect(process.env.MONGO_URI, { useNewUrlParser: true, useUnifiedTopology: true })
+.then(() => console.log('Conectado a MongoDB Atlas'))
+.catch(err => console.error('Error de conexión:', err));;
 
 let Person;
 
+
+const personSchema= new mongoose.Schema({
+  name:{
+    type: String
+  },
+  age:{
+    type: Number
+  },
+  favoriteFoods:{
+    type: [String]
+  }
+})
+
+Person=mongoose.model('Person',personSchema)
+
 const createAndSavePerson = (done) => {
-  done(null /*, data*/);
+
+  const person = new Person({
+    name: "John",
+    age: 30,
+    favoriteFoods: ["pizza", "pasta"]
+  })
+
+  person.save((err, data) => {
+    if (err) return console.error(err);
+    done(null, data)
+  })
 };
 
 const createManyPeople = (arrayOfPeople, done) => {
